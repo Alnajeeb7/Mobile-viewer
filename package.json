@@ -1,0 +1,62 @@
+{
+  "name": "mobile-viewer",
+  "displayName": "Mobile Viewer",
+  "description": "Preview web apps in mobile, tablet and desktop device frames directly inside VS Code.",
+  "version": "0.0.1",
+  "publisher": "AzeezAeroDev",
+  "author": {
+    "name": "Azeez Aerodev"
+  },
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alnajeeb7/Mobile-viewer"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "mobile",
+    "preview",
+    "responsive",
+    "device",
+    "webview",
+    "iPhone",
+    "Android",
+    "simulator",
+    "emulator",
+    "developer tools"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mobileViewer.open",
+        "title": "Mobile Viewer: Open Preview",
+        "icon": "$(device-mobile)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "mobileViewer.open",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "mobileViewer.open"
+        }
+      ]
+    }
+  }
+}

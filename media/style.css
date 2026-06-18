@@ -1,0 +1,857 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  color: var(--vscode-foreground);
+  background: var(--vscode-editor-background);
+  overflow: hidden;
+}
+
+/* ===================== TOOLBAR ===================== */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  background: var(--vscode-sideBar-background);
+  border-bottom: 1px solid var(--vscode-panel-border);
+  flex-wrap: wrap;
+}
+
+#urlInput {
+  flex: 1 1 200px;
+  min-width: 100px;
+  padding: 4px 8px;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 3px;
+  font-size: 13px;
+}
+#urlInput:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+}
+
+button, select {
+  padding: 4px 9px;
+  background: var(--vscode-button-secondaryBackground, #3a3d41);
+  color: var(--vscode-button-secondaryForeground, #ffffff);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+button:hover, select:hover {
+  background: var(--vscode-button-secondaryHoverBackground, #45494e);
+}
+button:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+/* The dropdown POPUP (the open list of options) is rendered by the OS/
+   browser, not the page — but Chromium (which VS Code's webview uses)
+   does respect background/color on <option>/<optgroup>, so force a dark
+   theme there too instead of the native white popup. */
+#deviceSelect {
+  color-scheme: dark;
+}
+#deviceSelect option,
+#deviceSelect optgroup {
+  background-color: #252526;
+  color: #cccccc;
+}
+#deviceSelect option:checked,
+#deviceSelect option:hover {
+  background-color: #094771;
+  color: #ffffff;
+}
+#deviceSelect optgroup {
+  font-weight: 600;
+  font-style: normal;
+}
+
+button#fitBtn.active {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-button-background);
+}
+
+#favBtn { font-size: 14px; padding: 3px 7px; }
+#favBtn.active { color: #ffd54a; border-color: #ffd54a; }
+
+#statusBarBtn { font-size: 12px; }
+#statusBarBtn[data-mode="light"] { background:#e9e9ea; color:#1c1c1e; border-color:#c8c8ca; }
+#statusBarBtn[data-mode="dark"]  { background:#1c1c1e; color:#f5f5f5; border-color:#3a3a3c; }
+#statusBarBtn[data-mode="off"]   { opacity: 0.45; }
+
+#zoomLabel {
+  font-size: 12px;
+  min-width: 38px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* ===================== VIEWPORT ===================== */
+
+.viewport {
+  height: calc(100% - 45px);
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 36px;
+  background-color: var(--vscode-editor-background);
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,.025) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.025) 75%),
+    linear-gradient(45deg, rgba(255,255,255,.025) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.025) 75%);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* ===================== FRAME ===================== */
+
+.device-frame-outer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.device-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  background: #0a0a0a;
+  transform-origin: top left;
+  transition: width 0.12s ease, height 0.12s ease, border-radius 0.12s ease;
+  /* Subtle rim light — makes the bezel look like polished titanium/stainless */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.10) inset,
+    0 12px 48px rgba(0,0,0,0.55),
+    0 2px  6px  rgba(0,0,0,0.40);
+}
+
+.device-frame.responsive {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px dashed var(--vscode-panel-border);
+  border-radius: 4px;
+  box-shadow: none;
+  background: transparent;
+}
+
+.device-label {
+  position: absolute;
+  top: -22px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 11px;
+  opacity: 0.65;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ===================== SCREEN WRAP ===================== */
+
+.screen-wrap {
+  position: absolute;
+  overflow: hidden;
+  background: #000;
+}
+.device-frame.responsive .screen-wrap {
+  top: 0; left: 0; width: 100%; height: 100%;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* ===================== IFRAME ===================== */
+
+#previewFrame {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: none;          /* hidden by default; JS shows it when a URL loads */
+  background: #ffffff;
+  z-index: 2;
+}
+
+/* ===================== WALLPAPER ===================== */
+
+.wallpaper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  font-family: -apple-system, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+  text-align: center;
+  /* Pure black base — the two orbs below do all the coloring, matching
+     the real iOS 16 "Spirit" wallpaper: a circular pink/violet glow at
+     top fading to black, and a separate icy blue/white glow at bottom,
+     with a genuine black band where they meet in the middle. */
+  background: #000000;
+}
+
+/* Top orb: pink core -> violet -> black, perfectly round */
+.wallpaper-glow {
+  position: absolute;
+  top: -20%;
+  left: -25%;
+  width: 150%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 25%,
+    #f9a8ff 0%,
+    #e879f9 8%,
+    #c084fc 18%,
+    #9333ea 30%,
+    #5b21b6 42%,
+    #1e1033 56%,
+    #000000 70%
+  );
+  pointer-events: none;
+}
+
+/* Bottom orb: icy white/blue core -> deep blue -> black, perfectly round */
+.wallpaper-glow-2 {
+  position: absolute;
+  bottom: -20%;
+  left: -25%;
+  width: 150%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 75%,
+    #eef6ff 0%,
+    #cfe8ff 10%,
+    #93c5fd 20%,
+    #3b82f6 34%,
+    #1e3a8a 48%,
+    #0f1a3d 62%,
+    #000000 76%
+  );
+  pointer-events: none;
+}
+
+/* ---- Lock clock ---- */
+.lock-clock {
+  position: relative;
+  margin-top: 100px;
+  z-index: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Apple devices have San Francisco installed natively; Windows has Segoe
+     UI Variable (very close in shape); this stack picks whichever is
+     actually present on the user's machine rather than a generic fallback. */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Roboto, Arial, sans-serif;
+}
+.lock-time {
+  font-size: 80px;
+  font-weight: 100;        /* true Ultralight — 200 still reads too heavy */
+  line-height: 1;
+  letter-spacing: 0;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  font-variant-numeric: tabular-nums;
+  font-stretch: 100%;
+}
+.lock-date {
+  margin-bottom: 2px;
+  font-size: 16px;
+  font-weight: 500;        /* medium, not bold — real lock screen date is subtle */
+  opacity: 0.92;
+  letter-spacing: 0.1px;
+}
+.lock-hint {
+  position: relative;
+  margin-top: auto;
+  margin-bottom: 90px;
+  padding: 0 36px;
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0.55;
+  line-height: 1.45;
+  z-index: 1;
+  font-family: -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+
+/* Android (Pixel) wallpaper: Material You-inspired soft green/sage gradient
+   reminiscent of Pixel's nature live wallpapers, with a small "widget" card
+   hint below the clock instead of plain hint text. */
+.wallpaper[data-platform="android"] {
+  background: linear-gradient(165deg, #cfe8c0 0%, #8fbf7a 22%, #4f8a5c 46%, #2d5f43 68%, #16332a 86%, #0a1a15 100%);
+}
+.wallpaper[data-platform="android"] .wallpaper-glow {
+  background: radial-gradient(circle at 30% 20%, rgba(220,237,180,0.55) 0%, rgba(143,191,122,0.25) 38%, rgba(0,0,0,0) 68%);
+  height: 60%;
+}
+.wallpaper[data-platform="android"] .wallpaper-glow-2 {
+  background: radial-gradient(circle at 70% 85%, rgba(22,51,42,0.6) 0%, rgba(10,26,21,0.3) 45%, rgba(0,0,0,0) 70%);
+  height: 60%;
+}
+.wallpaper[data-platform="android"] .lock-clock {
+  align-self: flex-start;
+  margin-left: 28px;
+  margin-top: 64px;
+  text-align: left;
+}
+.wallpaper[data-platform="android"] .lock-date {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+}
+.wallpaper[data-platform="android"] .lock-time {
+  font-size: 60px;
+  font-weight: 400;
+  letter-spacing: -1px;
+}
+.wallpaper[data-platform="android"] .lock-hint {
+  align-self: center;
+  margin-top: 18px;
+  padding: 10px 18px;
+  background: rgba(255,255,255,0.16);
+  border-radius: 16px;
+  backdrop-filter: blur(6px);
+  max-width: 70%;
+}
+
+/* Samsung (One UI) wallpaper: pale, almost-white gradient with a soft
+   flowing diagonal "S" ribbon, echoing Samsung's signature wave artwork
+   and the light Galaxy Unpacked key-art style. */
+.wallpaper[data-platform="samsung"] {
+  background: linear-gradient(165deg, #fdfdfd 0%, #eef0f4 35%, #dde1ea 60%, #c7cce0 100%);
+  color: #1a1a2e;
+}
+.wallpaper[data-platform="samsung"] .wallpaper-glow {
+  /* Upper ribbon band — cool blue-grey diagonal sweep */
+  top: -10%;
+  left: -40%;
+  width: 220%;
+  height: 46%;
+  border-radius: 0;
+  transform: rotate(-18deg);
+  background: linear-gradient(
+    100deg,
+    rgba(99,123,255,0) 0%,
+    rgba(99,123,255,0.35) 30%,
+    rgba(173,143,255,0.45) 50%,
+    rgba(99,123,255,0.25) 70%,
+    rgba(99,123,255,0) 100%
+  );
+}
+.wallpaper[data-platform="samsung"] .wallpaper-glow-2 {
+  /* Lower ribbon band, mirrored — completes the S-curve impression */
+  bottom: -14%;
+  left: -40%;
+  width: 220%;
+  height: 46%;
+  border-radius: 0;
+  transform: rotate(-18deg);
+  background: linear-gradient(
+    100deg,
+    rgba(91,140,255,0) 0%,
+    rgba(91,140,255,0.3) 30%,
+    rgba(120,200,255,0.4) 50%,
+    rgba(91,140,255,0.22) 70%,
+    rgba(91,140,255,0) 100%
+  );
+}
+.wallpaper[data-platform="samsung"] .lock-clock { margin-top: 100px; }
+.wallpaper[data-platform="samsung"] .lock-time {
+  font-size: 68px;
+  font-weight: 300;
+  color: #1a1a2e;
+  text-shadow: none;
+}
+.wallpaper[data-platform="samsung"] .lock-date {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a4a68;
+  opacity: 1;
+}
+.wallpaper[data-platform="samsung"] .lock-hint {
+  color: #5a5a78;
+  opacity: 0.75;
+  background: rgba(255,255,255,0.5);
+  border-radius: 14px;
+  padding: 8px 18px;
+  max-width: 70%;
+  align-self: center;
+}
+
+/* Non-phone (tablets/displays): same black-based two-orb design using the
+   Azeez AeroDev brand colors (indigo + cyan) instead of iOS pink/blue */
+.wallpaper[data-platform="none"] {
+  background: #000000;
+}
+.wallpaper[data-platform="none"] .wallpaper-glow {
+  background: radial-gradient(
+    circle at 50% 35%,
+    #ede9fe 0%,
+    #c4b5fd 14%,
+    #8b5cf6 28%,
+    #6366f1 46%,
+    #4338ca 64%,
+    #1e1b4b 82%,
+    #000000 100%
+  );
+}
+.wallpaper[data-platform="none"] .wallpaper-glow-2 {
+  background: radial-gradient(
+    circle at 50% 65%,
+    #cffafe 0%,
+    #67e8f9 14%,
+    #22d3ee 28%,
+    #0891b2 46%,
+    #155e75 64%,
+    #082f3a 82%,
+    #000000 100%
+  );
+}
+.wallpaper[data-platform="none"] .lock-clock { margin-top: 60px; }
+.wallpaper[data-platform="none"] .lock-time { font-size: 52px; }
+.wallpaper[data-platform="none"] .lock-date { font-size: 15px; }
+
+/* Smart displays: clock centred vertically, larger */
+[data-chrome="display"] .wallpaper .lock-clock,
+[data-chrome="displayCam"] .wallpaper .lock-clock { margin: auto 0; }
+[data-chrome="display"] .wallpaper .lock-time,
+[data-chrome="displayCam"] .wallpaper .lock-time { font-size: 84px; }
+
+/* Responsive mode and small phones: slightly smaller clock so it never
+   crowds a narrow screen */
+.device-frame.responsive .wallpaper { border-radius: 0; }
+.device-frame.responsive .wallpaper .lock-time { font-size: 48px; letter-spacing: -2px; }
+.device-frame.responsive .wallpaper .lock-date { font-size: 16px; }
+.device-frame.responsive .wallpaper .lock-hint { font-size: 13px; padding: 0 24px; }
+.device-frame.responsive .wallpaper .lock-clock { margin-top: auto; margin-bottom: 12px; }
+
+[data-chrome="homeButton"] .wallpaper .lock-clock { margin-top: 70px; }
+[data-chrome="homeButton"] .wallpaper .lock-time { font-size: 56px; }
+[data-chrome="homeButton"] .wallpaper .lock-date { font-size: 14px; }
+[data-chrome="homeButton"] .wallpaper .lock-hint { font-size: 12px; padding: 0 28px; margin-bottom: 60px; }
+
+[data-chrome="minimal"] .wallpaper .lock-clock,
+[data-chrome="punchHole"] .wallpaper .lock-clock { margin-top: 80px; }
+
+/* ===================== STATUS BAR ===================== */
+
+.status-bar {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  font-family: -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  z-index: 6;
+  pointer-events: none;
+  color: #1c1c1e;
+  background: #ffffff;
+}
+.status-bar[data-theme="dark"] {
+  color: #f5f5f7;
+  background: #000000;
+}
+/* Transparent over wallpaper when no page loaded — show clock on wallpaper bg */
+.status-bar[data-theme="wallpaper"] {
+  color: #ffffff;
+  background: transparent;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.status-time { line-height: 1; }
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.status-icon { height: 11px; width: auto; display: block; }
+.status-icon--battery { height: 11px; }
+
+/* Compact for iPhone SE */
+[data-chrome="homeButton"] .status-bar { font-size: 12px; padding: 0 14px; }
+[data-chrome="homeButton"] .status-icon { height: 10px; }
+
+/* iOS notch: status bar content sits below the notch cutout */
+[data-chrome="notch"] .status-bar {
+  align-items: flex-end;
+  padding-bottom: 6px;
+}
+
+/* iOS Dynamic Island: time/icons sit in the SAME row as the island, flanking
+   it left and right — exactly like the real iPhone 14 Pro Max status bar.
+   The row's vertical center lines up with the island's vertical center. */
+[data-chrome="island"] .status-bar {
+  align-items: center;
+  padding-top: 2px;
+}
+
+/* ===================== CHROME ELEMENTS (hidden by default) ===================== */
+
+.chrome {
+  display: none;
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.side-button {
+  display: none;
+  position: absolute;
+  pointer-events: none;
+  /* Titanium / stainless pill — lighter in middle, darker at edges */
+  background: linear-gradient(to right, #1c1c1e 0%, #3a3a3c 40%, #3a3a3c 60%, #1c1c1e 100%);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    inset 0 -1px 0 rgba(0,0,0,0.25);
+}
+
+.chrome-gesture-bar {
+  bottom: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36%;
+  height: 5px;
+  background: rgba(255,255,255,0.38);
+  border-radius: 999px;
+}
+
+/* ===================== iPhone 14 Pro Max — Dynamic Island ===================== */
+/*
+  Real device: screen runs edge-to-edge with only a hairline bezel.
+  The Dynamic Island is a cutout IN the screen surface itself, sitting
+  ~12px below the very top edge, centered. No separate "bezel zone" above
+  it — the island floats directly on top of whatever content/wallpaper is
+  showing, exactly like on a physical device.
+*/
+
+[data-chrome="island"] {
+  border-radius: 52px;
+  background: #0a0a0c;
+  box-shadow:
+    0 0 0 1.5px rgba(255,255,255,0.08),
+    0 18px 50px rgba(0,0,0,0.85);
+}
+
+[data-chrome="island"] .screen-wrap {
+  border-radius: 46px;
+  background: #000000;
+  overflow: hidden; /* the island visually "cuts into" the screen content */
+}
+
+[data-chrome="island"] .chrome-island {
+  display: block;
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 27%;        /* ~116px on a 430px-wide screen — matches real proportions */
+  height: 32px;
+  background: #000000;
+  border-radius: 50px;
+  z-index: 20;        /* always above wallpaper, iframe, and status bar */
+}
+
+/* Front camera lens: a distinct circle inset into the right side of the
+   pill, rendered as a pseudo-element so it reads clearly against the
+   pill's black background (a plain box-shadow of the same black is
+   invisible, so this uses a lighter radial gradient + highlight). */
+[data-chrome="island"] .chrome-island::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  width: 13px;
+  height: 13px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #3a3a42 0%, #1c1c22 55%, #050507 100%);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.6);
+}
+
+[data-chrome="island"] .chrome-gesture-bar { display: block; }
+
+/* ===================== iPhone XR / 12 Pro — Notch ===================== */
+
+[data-chrome="notch"] {
+  border-radius: 42px;
+  background: #0a0a0c;
+  box-shadow:
+    0 0 0 1.5px rgba(255,255,255,0.10),
+    0 20px 56px rgba(0,0,0,0.90);
+}
+[data-chrome="notch"] .screen-wrap {
+  border-radius: 38px;
+  background: #000;
+}
+[data-chrome="notch"] .chrome-notch {
+  display: block;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 54%;     /* real notch: ~209pt of 390pt = 54% */
+  height: 30px;
+  background: #000000;
+  border-radius: 0 0 22px 22px;
+  z-index: 10;
+}
+[data-chrome="notch"] .chrome-gesture-bar { display: block; }
+
+/* ===================== Punch-hole (Pixel 7, Galaxy S series, Fold) ===================== */
+
+[data-chrome="punchHole"] {
+  border-radius: 36px;
+}
+[data-chrome="punchHole"] .screen-wrap {
+  border-radius: 28px;
+  background: #000;
+}
+[data-chrome="punchHole"] .chrome-punch-hole {
+  display: block;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 13px;
+  height: 13px;
+  background: #000;
+  border-radius: 50%;
+  /* ring of lens catch-light */
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.08), 0 0 0 3px rgba(0,0,0,0.6);
+}
+[data-chrome="punchHole"] .chrome-gesture-bar { display: block; }
+
+/* ===================== Minimal bezel (Galaxy S8+, Surface Duo, landscape) ===================== */
+
+[data-chrome="minimal"] {
+  border-radius: 26px;
+}
+[data-chrome="minimal"] .screen-wrap {
+  border-radius: 20px;
+  background: #000;
+}
+[data-chrome="minimal"] .chrome-gesture-bar { display: block; }
+
+/* ===================== iPhone SE — Home button ===================== */
+
+[data-chrome="homeButton"] {
+  border-radius: 40px;
+  background: #111;
+}
+[data-chrome="homeButton"] .screen-wrap {
+  border-radius: 4px;
+  background: #000;
+}
+/* Earpiece speaker */
+[data-chrome="homeButton"] .chrome-top-speaker {
+  display: block;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 5px;
+  background: #2a2a2a;
+  border-radius: 999px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), 0 0.5px 0 rgba(255,255,255,0.06);
+}
+/* Home button */
+[data-chrome="homeButton"] .chrome-home-button {
+  display: block;
+  bottom: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #3a3a3c, #1c1c1e);
+  box-shadow:
+    0 0 0 2px #2c2c2e,
+    0 0 0 3.5px #3a3a3c,
+    inset 0 1px 2px rgba(255,255,255,0.10),
+    0 2px 6px rgba(0,0,0,0.6);
+}
+
+/* ===================== Tablet / iPad / Surface ===================== */
+
+[data-chrome="tablet"] {
+  border-radius: 20px;
+  background: #0a0a0a;
+}
+[data-chrome="tablet"] .screen-wrap {
+  border-radius: 8px;
+  background: #000;
+}
+[data-chrome="tablet"] .chrome-camera-dot {
+  display: block;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 9px;
+  height: 9px;
+  background: #2a2a2d;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.10), 0 0 4px rgba(0,0,0,0.8);
+}
+
+/* ===================== Smart Displays (Nest Hub) ===================== */
+
+[data-chrome="display"],
+[data-chrome="displayCam"] {
+  border-radius: 16px;
+  background: #e8e4dc;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.10) inset,
+    0 8px 32px rgba(0,0,0,0.35);
+}
+[data-chrome="display"] .screen-wrap,
+[data-chrome="displayCam"] .screen-wrap {
+  border-radius: 4px;
+  background: #000;
+}
+[data-chrome="display"] .chrome-speaker,
+[data-chrome="displayCam"] .chrome-speaker {
+  display: block;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 55%;
+  height: 20px;
+  background-image: radial-gradient(circle, #c4bfb6 1.5px, transparent 1.6px);
+  background-size: 7px 7px;
+  border-radius: 8px;
+}
+[data-chrome="displayCam"] .chrome-top-speaker {
+  display: block;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 5px;
+  background: #b9b5ac;
+  border-radius: 999px;
+}
+
+/* ===================== SIDE BUTTONS ===================== */
+
+[data-chrome="notch"] .side-button,
+[data-chrome="island"] .side-button,
+[data-chrome="punchHole"] .side-button,
+[data-chrome="minimal"] .side-button,
+[data-chrome="homeButton"] .side-button {
+  display: block;
+}
+
+/* Power/sleep button — right side, taller pill */
+.side-button--power {
+  right: -5px;
+  top: 100px;
+  width: 5px;
+  height: 68px;
+  border-radius: 0 3px 3px 0;
+}
+
+/* Volume Up — left side, shorter pill */
+.side-button--volume-up {
+  left: -5px;
+  top: 84px;
+  width: 5px;
+  height: 36px;
+  border-radius: 3px 0 0 3px;
+}
+
+/* Volume Down — left side below volume up */
+.side-button--volume-down {
+  left: -5px;
+  top: 130px;
+  width: 5px;
+  height: 36px;
+  border-radius: 3px 0 0 3px;
+}
+
+/* iPhone SE: classic side/top button, no long power key */
+[data-chrome="homeButton"] .side-button--power {
+  top: 14px;
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 5px;
+  border-radius: 0 0 3px 3px;
+}
+[data-chrome="homeButton"] .side-button--volume-up  { top: 70px; height: 30px; }
+[data-chrome="homeButton"] .side-button--volume-down { top: 108px; height: 30px; }
+
+/* iPhone 12 Pro / XR (notch): volume buttons sit higher and closer
+   together than on the 14 Pro Max's titanium frame, and the power
+   button is shorter — matches the real device's button placement. */
+[data-chrome="notch"] .side-button--power {
+  top: 118px;
+  height: 56px;
+}
+[data-chrome="notch"] .side-button--volume-up {
+  top: 70px;
+  height: 30px;
+}
+[data-chrome="notch"] .side-button--volume-down {
+  top: 106px;
+  height: 30px;
+}
+
+/* Pixel 7 / Pixel-style punch-hole phones: power + volume rocker are both
+   on the RIGHT side only (no buttons on the left), power sits above the
+   volume rocker — matches the real Pixel 7 button layout. */
+[data-chrome="punchHole"] .side-button--volume-up,
+[data-chrome="punchHole"] .side-button--volume-down {
+  left: auto;
+  right: -5px;
+  border-radius: 0 3px 3px 0;
+}
+[data-chrome="punchHole"] .side-button--power {
+  top: 120px;
+  height: 52px;
+}
+[data-chrome="punchHole"] .side-button--volume-up {
+  top: 180px;
+  height: 64px;
+}
+[data-chrome="punchHole"] .side-button--volume-down {
+  display: none; /* merged into the single volume rocker above on Pixel/Galaxy */
+}
+
+/* Samsung devices specifically: slightly slimmer buttons, power sits
+   below the volume rocker (opposite order from Pixel) */
+[data-chrome="punchHole"][data-platform-hint="samsung"] .side-button--power {
+  top: 190px;
+}
+[data-chrome="punchHole"][data-platform-hint="samsung"] .side-button--volume-up {
+  top: 120px;
+  height: 64px;
+}
