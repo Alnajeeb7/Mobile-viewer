@@ -59,42 +59,62 @@ touch-target sizing as you work.
 
 ## Screenshots
 
-**iPhone 14 Pro Max** — captures the floating Dynamic Island cutout
-exactly as it appears on the real device, paired with a live iOS-style
-status bar above the page (12-hour clock, signal, Wi-Fi, and battery
-icons) and a gesture bar along the bottom edge.
+<table>
+<tr>
+<td width="50%">
+
+**iPhone 14 Pro Max**
+Dynamic Island cutout, live iOS-style status bar (12-hour clock, signal, Wi-Fi, and battery icons), and a bottom gesture bar.
 
 ![iPhone 14 Pro Max](https://github.com/Alnajeeb7/mobile-viewer/raw/HEAD/media/screenshots/iphone-14-pro-max.png)
 
-**Pixel 7** — shows the centered front-camera cutout at the top of the
-screen alongside Android's dark-themed status bar, with the clock shown
-in 12-hour format with AM/PM, matching how the device looks in hand.
+</td>
+<td width="50%">
+
+**Pixel 7**
+Centered front-camera cutout paired with Android's dark-themed status bar and a 12-hour clock with AM/PM.
 
 ![Pixel 7](https://github.com/Alnajeeb7/mobile-viewer/raw/HEAD/media/screenshots/pixel-7.png)
 
-**Samsung Galaxy S26 Ultra** — the same centered front-camera cutout as
-the Pixel, paired with the One UI-inspired idle wallpaper that appears
-when no URL is loaded: a diagonal wave gradient with a live clock.
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**Samsung Galaxy S26 Ultra**
+Centered front-camera cutout with the One UI-inspired idle wallpaper — a diagonal wave gradient with a live clock.
 
 ![Samsung Galaxy S26 Ultra](https://github.com/Alnajeeb7/mobile-viewer/raw/HEAD/media/screenshots/galaxy-s26-ultra.png)
 
-**iPad Air** — the thicker tablet bezel with a small camera dot centered
-along the top edge, sized to the iPad Air's actual viewport so layouts
-and breakpoints can be checked at true scale.
+</td>
+<td width="50%">
+
+**iPad Air**
+Thicker tablet bezel with a centered top camera dot, sized to the device's true viewport for layout testing.
 
 ![iPad Air](https://github.com/Alnajeeb7/mobile-viewer/raw/HEAD/media/screenshots/ipad-air.png)
 
-**iPhone SE** — the classic home-button design with a top speaker bar
-and earpiece speaker, representing the smallest supported iPhone
-viewport for testing compact layouts.
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**iPhone SE**
+Classic home-button design with a top speaker bar and earpiece speaker — the smallest supported iPhone viewport.
 
 ![iPhone SE](https://github.com/Alnajeeb7/mobile-viewer/raw/HEAD/media/screenshots/iphone-se.png)
 
-**Nest Hub Max** — the smart-display shell with a light bezel and a
-visible speaker grille along the bottom, plus the camera bar that's
-unique to the Max model.
+</td>
+<td width="50%">
+
+**Nest Hub Max**
+Smart-display shell with a light bezel, a visible speaker grille, and the camera bar unique to the Max model.
 
 ![Nest Hub Max](https://github.com/Alnajeeb7/mobile-viewer/raw/HEAD/media/screenshots/nest-hub-max.png)
+
+</td>
+</tr>
+</table>
 
 ---
 
